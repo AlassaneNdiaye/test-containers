@@ -1,4 +1,15 @@
+import subprocess
 import yaml
+
+
+def execute_command(command):
+    completed_process = subprocess.run(command, shell=True, executable="/bin/bash",
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = dict()
+    result["exit-code"] = completed_process.returncode
+    result["output"] = completed_process.stdout.decode("utf-8").strip()
+    result["error"] = completed_process.stderr.decode("utf-8").strip()
+    return result
 
 
 def parse_yaml_file(path):
