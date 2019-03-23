@@ -1,114 +1,106 @@
+from utils import execute_command
 import docker
 import os
-import re
 import shutil
-import subprocess
 import tempfile
+import unittest
 
 docker_client = docker.from_env()
 
 
-class ContainerTestEnvironment:
-    def __init__(self, container):
-        self.dir_path = tempfile.mkdtemp()
-        self.previous_working_dir = os.getcwd()
-        os.chdir(self.dir_path)
-        self.docker_container = docker_client.containers.run(container["name"], detach=True, **container["arguments"])
+class ContainerTest:
+    def __init__(self, container, test):
+        self.container = container
+        self.test = test
+        self.container_name = self.container["name"].replace("-", "_")
+        self.test_name = self.test["name"].replace("-", "_").replace(" ", "_")
+        self.test_case_object = None
+        self.test_result = None
 
-    def __enter__(self):
-        return self
+    def __evaluate_result(self):
+        if "exit-code" in self.test:
+            self.test_case_object.assertEqual(self.test["exit-code"], self.test_result["exit-code"])
 
-    def __exit__(self, type, value, traceback):
-        self.docker_container.stop()
-        os.chdir(self.previous_working_dir)
-        shutil.rmtree(self.dir_path)
+        if "expected-output" in self.test:
+            self.test_case_object.assertRegexpMatches(self.test_result["output"], self.test["expected-output"])
 
-    def evaluate_environment_variables(self, test):
-        if "environment-variables" not in test:
-            return
-        environment_variables = test["environment-variables"]
-        for variable in environment_variables.keys():
-            value = self.execute_command(environment_variables[variable])["output"]
-            environment_variables[variable] = value
+        if "excluded-output" in self.test:
+            self.test_case_object.assertNotRegexpMatches(self.test_result["output"], self.test["excluded-output"])
 
-    def evaluate_result(self, test, result):
-        evaluation = {"passed": [], "failed": []}
+        if "expected-error" in self.test:
+            self.test_case_object.assertRegexpMatches(self.test_result["error"], self.test["expected-error"])
 
-        if "exit-code" in test:
-            if test["exit-code"] == result["exit-code"]:
-                evaluation["passed"].append("exit-code")
-            else:
-                evaluation["failed"].append("exit-code")
+        if "excluded-error" in self.test:
+            self.test_case_object.assertNotRegexpMatches(self.test_result["error"], self.test["excluded-error"])
 
-        if "expected-output" in test:
-            if re.search(test["expected-output"], result["output"]) is not None:
-                evaluation["passed"].append("expected-output")
-            else:
-                evaluation["failed"].append("expected-output")
-
-        if "excluded-output" in test:
-            if re.search(test["excluded-output"], result["output"]) is None:
-                evaluation["passed"].append("excluded-output")
-            else:
-                evaluation["failed"].append("excluded-output")
-
-        if "expected-error" in test:
-            if re.search(test["expected-error"], result["error"]) is not None:
-                evaluation["passed"].append("expected-error")
-            else:
-                evaluation["failed"].append("expected-error")
-
-        if "excluded-error" in test:
-            if re.search(test["excluded-error"], result["error"]) is None:
-                evaluation["passed"].append("excluded-error")
-            else:
-                evaluation["failed"].append("excluded-error")
-
-        if "files" in test:
-            evaluation["file-tests"] = {"passed": [], "failed": []}
-            for file_tests in test["files"]:
-                passed = True
+        if "files" in self.test:
+            for file_tests in self.test["files"]:
                 if "exists" in file_tests:
-                    if os.path.exists(file_tests["path"]) != file_tests["exists"]:
-                        passed = False
+                    self.test_case_object.assertEqual(os.path.exists(file_tests["path"]), file_tests["exists"])
                 if "expected-content" in file_tests or "excluded-content" in file_tests:
                     with open(file_tests["path"]) as f:
                         file_content = f.read()
                     if "expected-content" in file_tests:
-                        if re.search(file_tests["expected-content"], file_content) is None:
-                            passed = False
+                        self.test_case_object.assertRegexpMatches(file_content, file_tests["expected-content"])
                     if "excluded-content" in file_tests:
-                        if re.search(file_tests["excluded-content"], file_content) is not None:
-                            passed = False
-                if passed:
-                    evaluation["file-tests"]["passed"].append(file_tests["path"])
-                else:
-                    evaluation["file-tests"]["failed"].append(file_tests["path"])
+                        self.test_case_object.assertNotRegexpMatches(file_content, file_tests["excluded-content"])
 
-        return evaluation
-
-    def execute_command(self, command):
-        completed_process = subprocess.run(command, shell=True, executable="/bin/bash",
-                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        result = dict()
-        result["exit-code"] = completed_process.returncode
-        result["output"] = completed_process.stdout.decode("utf-8").strip()
-        result["error"] = completed_process.stderr.decode("utf-8").strip()
-        return result
-
-    def expand_environment_variables(self, test):
-        if "environment-variables" not in test:
+    def __expand_environment_variables(self):
+        if "environment-variables" not in self.test:
             return
-        environment_variables = test["environment-variables"]
+
+        environment_variables = self.test["environment-variables"]
+        for variable, definition in environment_variables.items():
+            environment_variables[variable] = execute_command(definition)["output"]
+
         for key in ["command", "expected-output", "excluded-output", "expected-error", "excluded-error"]:
-            if key not in test:
+            if key not in self.test:
                 continue
             for variable, value in environment_variables.items():
-                test[key] = test[key].replace("${%s}" % variable, value)
+                self.test[key] = self.test[key].replace("${%s}" % variable, value)
 
-    def run_test(self, test):
-        self.evaluate_environment_variables(test)
-        self.expand_environment_variables(test)
-        result = self.execute_command(test["command"])
-        evaluation = self.evaluate_result(test=test, result=result)
-        return {"evaluation": evaluation, "result": result, "test": test}
+    def run_test(self, test_case_object):
+        self.test_case_object = test_case_object
+        with ContainerTestEnvironment(container=self.container):
+            self.__expand_environment_variables()
+            self.test_result = execute_command(self.test["command"])
+            self.__evaluate_result()
+
+
+class ContainerTestCase(unittest.TestCase):
+    def setUp(self):
+        self.previous_working_dir = os.getcwd()
+        self.working_dir = tempfile.mkdtemp()
+        os.chdir(self.working_dir)
+
+    def tearDown(self):
+        os.chdir(self.previous_working_dir)
+        shutil.rmtree(self.working_dir)
+
+    @staticmethod
+    def generate_tests(tests):
+        def generate_test_method(test):
+            def generated_test_method(self):
+                test.run_test(self)
+            return generated_test_method
+
+        for test in tests:
+            test_name = "test_%s_%s" % (test.container_name, test.test_name)
+            setattr(ContainerTestCase, test_name, generate_test_method(test))
+
+
+class ContainerTestEnvironment:
+    def __init__(self, container):
+        self.container = container
+
+    def __enter__(self):
+        self.docker_container = docker_client.containers.run(self.container["name"], detach=True,
+                                                             **self.container["arguments"])
+        self.__wait_container_ready()
+
+    def __exit__(self, type, value, traceback):
+        self.docker_container.stop()
+
+    def __wait_container_ready(self):
+        # TODO
+        pass
