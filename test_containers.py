@@ -1,77 +1,53 @@
-from environments import ContainerTestEnvironment
+from tests import ContainerTest, ContainerTestCase
 from utils import nested_get, parse_yaml_file
 import argparse
 import os
 import sys
-
-PADDING = " " * 4
-
-
-def print_failed_test(test):
-    print("FAILED.\nFailing tests:")
-    for failed_test in test["evaluation"]["failed"]:
-        print("%s%s: %s" % (PADDING, failed_test, test["test"][failed_test]))
-    if "file-tests" in test["evaluation"]:
-        for failed_test in test["evaluation"]["file-tests"]["failed"]:
-            print("%sfile test: %s" % (PADDING, failed_test))
+import unittest
 
 
-def print_separator():
-    print("-" * 80)
-
-
-def print_test(test):
-    print("test: %s\n" % test["test"]["name"])
-    print("exit code: %s\n" % test["result"]["exit-code"])
-    if test["result"]["output"]:
-        print("stdout:\n%s\n" % test["result"]["output"])
-    if test["result"]["error"]:
-        print("stderr:\n%s\n" % test["result"]["error"])
-    if test_passed(test):
-        print("PASSED.")
-    else:
-        print_failed_test(test)
-
-
-def preprocess_tests(tests):
-    for container_tests in tests:
+def expand_paths(test_dict):
+    for container_test_dict in test_dict:
         # replace relative paths with absolute paths for every volume
-        volumes = nested_get(container_tests, "container", "arguments", "volumes")
+        volumes = nested_get(container_test_dict, "container", "arguments", "volumes")
         if volumes:
             for path in volumes.keys():
                 abs_path = os.path.abspath(path)
                 if not path == abs_path:
-                    container_tests["container"]["arguments"]["volumes"][abs_path] = \
-                            container_tests["container"]["arguments"]["volumes"][path]
-                    container_tests["container"]["arguments"]["volumes"].pop(path)
+                    container_test_dict["container"]["arguments"]["volumes"][abs_path] = \
+                            container_test_dict["container"]["arguments"]["volumes"][path]
+                    container_test_dict["container"]["arguments"]["volumes"].pop(path)
+
+
+def get_tests(test_dict):
+    tests = []
+    for container_test_dict in test_dict:
+        for single_test_dict in container_test_dict["tests"]:
+            test = ContainerTest(container=container_test_dict["container"], test=single_test_dict)
+            tests.append(test)
     return tests
 
 
-def run_tests(path):
-    tests = parse_yaml_file(path)
-    tests = preprocess_tests(tests)
-    passed_all_tests = True
-    print_separator()
-    for container_tests in tests:
-        for single_test in container_tests["tests"]:
-            with ContainerTestEnvironment(container=container_tests["container"]) as environment:
-                completed_test = environment.run_test(single_test)
-                print_test(completed_test)
-                print_separator()
-                if not test_passed(completed_test):
-                    passed_all_tests = False
-    if passed_all_tests:
-        sys.exit(0)
-    else:
-        sys.exit(1)
+def preprocess_test_dict(test_dict):
+    expand_paths(test_dict)
 
 
-def test_passed(test):
-    if (len(test["evaluation"]["failed"]) > 0 or
-            ("file-tests" in test["evaluation"] and len(test["evaluation"]["file-tests"]["failed"]) > 0)):
-        return False
+def run_tests(path, exit=True):
+    test_dict = parse_yaml_file(path)
+    preprocess_test_dict(test_dict)
+    tests = get_tests(test_dict)
+    ContainerTestCase.generate_tests(tests)
+    tests = unittest.defaultTestLoader.loadTestsFromTestCase(ContainerTestCase)
+    suite = unittest.TestSuite()
+    suite.addTests(tests)
+    result = unittest.TextTestRunner().run(suite)
+    if exit:
+        if result.wasSuccessful():
+            sys.exit(0)
+        else:
+            sys.exit(1)
     else:
-        return True
+        return result
 
 
 if __name__ == "__main__":
