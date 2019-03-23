@@ -1,0 +1,17 @@
+- container:
+      name: "httpd:2.4"
+      arguments:
+          auto_remove: True
+          ports:
+              80: 80
+  tests:
+    - name: "Good"
+      command: "wget http://localhost/"
+      files:
+        - path: "index.html"
+          excluded-content: "It doesn't work!"
+    - name: "Bad"
+      command: "wget http://localhost/"
+      files:
+        - path: "index.html"
+          excluded-content: "It works!"

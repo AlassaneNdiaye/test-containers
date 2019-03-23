@@ -1,0 +1,13 @@
+- container:
+      name: "httpd:2.4"
+      arguments:
+          auto_remove: True
+          ports:
+              80: 80
+  tests:
+    - name: "Good"
+      command: "wget http://localhost/"
+      excluded-error: "FAIL"
+    - name: "Bad"
+      command: "wget http://localhost/"
+      excluded-error: "200 OK"
