@@ -1,3 +1,4 @@
+from results import TextTestResultWithSuccesses
 from tests import ContainerTest, ContainerTestCase
 from utils import nested_get, parse_yaml_file
 import argparse
@@ -40,7 +41,7 @@ def run_tests(path, exit=True):
     tests = unittest.defaultTestLoader.loadTestsFromTestCase(ContainerTestCase)
     suite = unittest.TestSuite()
     suite.addTests(tests)
-    result = unittest.TextTestRunner().run(suite)
+    result = unittest.TextTestRunner(resultclass=TextTestResultWithSuccesses).run(suite)
     if exit:
         if result.wasSuccessful():
             sys.exit(0)
