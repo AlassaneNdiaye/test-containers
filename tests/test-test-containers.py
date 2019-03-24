@@ -1,3 +1,8 @@
+import os
+import sys
+dir_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(dir_path, ".."))
+
 from test_containers import run_tests
 import unittest
 
