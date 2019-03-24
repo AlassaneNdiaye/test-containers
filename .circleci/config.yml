@@ -1,8 +1,7 @@
 version: 2
 jobs:
     build:
-        docker:
-          - image: circleci/python:3.6.1
+        machine: True
         working_directory: ~/test-containers
         steps:
           - checkout
