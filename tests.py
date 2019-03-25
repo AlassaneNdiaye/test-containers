@@ -2,7 +2,9 @@ from utils import execute_command
 import docker
 import os
 import shutil
+import sys
 import tempfile
+import time
 import unittest
 
 docker_client = docker.from_env()
@@ -102,5 +104,12 @@ class ContainerTestEnvironment:
         self.docker_container.stop()
 
     def __wait_container_ready(self):
-        # TODO
-        pass
+        inspection = docker_client.api.inspect_container(self.docker_container.id)
+        if "Health" in inspection["State"]:
+            print("\nWaiting for container to be healthy... ", end="", file=sys.stderr, flush=True)
+            while inspection["State"]["Health"]["Status"] != "healthy":
+                time.sleep(2)
+                inspection = docker_client.api.inspect_container(self.docker_container.id)
+            print("Container healthy.", file=sys.stderr)
+        else:
+            time.sleep(2)
