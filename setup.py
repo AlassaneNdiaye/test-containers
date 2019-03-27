@@ -1,4 +1,4 @@
-from test_containers import HELP_TEXT
+from test_containers.app import HELP_TEXT
 import setuptools
 
 with open("README.md", "r") as f:

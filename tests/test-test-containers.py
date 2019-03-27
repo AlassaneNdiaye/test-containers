@@ -3,7 +3,7 @@ import sys
 dir_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(dir_path, ".."))
 
-from test_containers import run_tests
+import test_containers
 import unittest
 
 
@@ -21,52 +21,52 @@ def process_result(result):
 
 class Tests(unittest.TestCase):
     def test_exit_code(self):
-        result = run_tests(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_expected_output(self):
-        result = run_tests(os.path.join(dir_path, "test_expected_output.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_expected_output.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_excluded_output(self):
-        result = run_tests(os.path.join(dir_path, "test_excluded_output.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_excluded_output.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_expected_error(self):
-        result = run_tests(os.path.join(dir_path, "test_expected_error.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_expected_error.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_excluded_error(self):
-        result = run_tests(os.path.join(dir_path, "test_excluded_error.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_excluded_error.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_file_exists(self):
-        result = run_tests(os.path.join(dir_path, "test_file_exists.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_file_exists.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_file_expected_content(self):
-        result = run_tests(os.path.join(dir_path, "test_file_expected_content.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_file_expected_content.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
     def test_file_excluded_content(self):
-        result = run_tests(os.path.join(dir_path, "test_file_excluded_content.yaml"), exit=False)
+        result = test_containers.run(os.path.join(dir_path, "test_file_excluded_content.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Good", result["successes"])
+        self.assertIn("test_containers.tests.ContainerTestCase.test_httpd:2.4_Bad", result["failures"])
 
 
 if __name__ == '__main__':
