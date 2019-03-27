@@ -1,4 +1,4 @@
-from utils import execute_command
+from test_containers.utils import execute_command
 import docker
 import os
 import shutil

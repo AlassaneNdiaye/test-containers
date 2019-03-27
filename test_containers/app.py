@@ -1,7 +1,6 @@
-from results import TextTestResultWithSuccesses
-from tests import ContainerTest, ContainerTestCase
-from utils import nested_get, parse_yaml_file
-import argparse
+from test_containers.results import TextTestResultWithSuccesses
+from test_containers.tests import ContainerTest, ContainerTestCase
+from test_containers.utils import nested_get, parse_yaml_file
 import os
 import sys
 import unittest
@@ -35,7 +34,7 @@ def preprocess_test_dict(test_dict):
     expand_paths(test_dict)
 
 
-def run_tests(path, exit=True):
+def run(path, exit=True):
     test_dict = parse_yaml_file(path)
     preprocess_test_dict(test_dict)
     tests = get_tests(test_dict)
@@ -51,10 +50,3 @@ def run_tests(path, exit=True):
             sys.exit(1)
     else:
         return result
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=HELP_TEXT)
-    parser.add_argument("--config", help="configuration file to get the tests from", required=True)
-    args = parser.parse_args()
-    run_tests(args.config)
