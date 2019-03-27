@@ -54,7 +54,7 @@ def run_tests(path, exit=True):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=("%s" % HELP_TEXT))
+    parser = argparse.ArgumentParser(description=HELP_TEXT)
     parser.add_argument("--config", help="configuration file to get the tests from", required=True)
     args = parser.parse_args()
     run_tests(args.config)
