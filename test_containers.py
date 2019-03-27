@@ -6,6 +6,8 @@ import os
 import sys
 import unittest
 
+HELP_TEXT = "Test containers using yaml files for configuration."
+
 
 def expand_paths(test_dict):
     for container_test_dict in test_dict:
@@ -52,7 +54,7 @@ def run_tests(path, exit=True):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Test containers using yaml files for configuration.")
+    parser = argparse.ArgumentParser(description=HELP_TEXT)
     parser.add_argument("--config", help="configuration file to get the tests from", required=True)
     args = parser.parse_args()
     run_tests(args.config)
