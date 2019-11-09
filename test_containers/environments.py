@@ -8,22 +8,34 @@ import time
 docker_client = docker.from_env()
 
 
-class ContainerTestEnvironment:
-    def __init__(self, container):
-        self.container = container
+class TestEnvironment:
+    def __init__(self):
+        pass
 
     def __enter__(self):
         self.previous_working_dir = os.getcwd()
         self.working_dir = tempfile.mkdtemp()
         os.chdir(self.working_dir)
+
+    def __exit__(self, type, value, traceback):
+        os.chdir(self.previous_working_dir)
+        shutil.rmtree(self.working_dir)
+
+
+class ContainerTestEnvironment(TestEnvironment):
+    def __init__(self, container):
+        super().__init__()
+        self.container = container
+
+    def __enter__(self):
+        super().__enter__()
         self.docker_container = docker_client.containers.run(self.container["name"], detach=True,
                                                              **self.container["arguments"])
         self.__wait_container_ready()
 
     def __exit__(self, type, value, traceback):
         self.docker_container.stop()
-        os.chdir(self.previous_working_dir)
-        shutil.rmtree(self.working_dir)
+        super().__exit__(type, value, traceback)
 
     def __wait_container_ready(self):
         inspection = docker_client.api.inspect_container(self.docker_container.id)
