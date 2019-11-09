@@ -1,13 +1,7 @@
 from test_containers.utils import execute_command
-import docker
+from test_containers.environments import ContainerTestEnvironment
 import os
-import shutil
-import sys
-import tempfile
-import time
 import unittest
-
-docker_client = docker.from_env()
 
 
 class ContainerTest:
@@ -80,32 +74,3 @@ class ContainerTestCase(unittest.TestCase):
         for test in tests:
             test_name = "test_%s_%s" % (test.container_name, test.test_name)
             setattr(ContainerTestCase, test_name, generate_test_method(test))
-
-
-class ContainerTestEnvironment:
-    def __init__(self, container):
-        self.container = container
-
-    def __enter__(self):
-        self.previous_working_dir = os.getcwd()
-        self.working_dir = tempfile.mkdtemp()
-        os.chdir(self.working_dir)
-        self.docker_container = docker_client.containers.run(self.container["name"], detach=True,
-                                                             **self.container["arguments"])
-        self.__wait_container_ready()
-
-    def __exit__(self, type, value, traceback):
-        self.docker_container.stop()
-        os.chdir(self.previous_working_dir)
-        shutil.rmtree(self.working_dir)
-
-    def __wait_container_ready(self):
-        inspection = docker_client.api.inspect_container(self.docker_container.id)
-        if "Health" in inspection["State"]:
-            print("\nWaiting for container to be healthy... ", end="", file=sys.stderr, flush=True)
-            while inspection["State"]["Health"]["Status"] != "healthy":
-                time.sleep(2)
-                inspection = docker_client.api.inspect_container(self.docker_container.id)
-            print("Container healthy.", file=sys.stderr)
-        else:
-            time.sleep(2)
