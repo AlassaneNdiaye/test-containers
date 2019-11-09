@@ -63,7 +63,7 @@ class ContainerTest:
             self.__evaluate_result()
 
 
-class ContainerTestCase(unittest.TestCase):
+class Tests(unittest.TestCase):
     @staticmethod
     def generate_tests(tests):
         def generate_test_method(test):
@@ -73,4 +73,4 @@ class ContainerTestCase(unittest.TestCase):
 
         for test in tests:
             test_name = "test_%s_%s" % (test.container_name, test.test_name)
-            setattr(ContainerTestCase, test_name, generate_test_method(test))
+            setattr(Tests, test_name, generate_test_method(test))

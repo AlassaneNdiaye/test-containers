@@ -1,5 +1,5 @@
 from test_containers.results import TextTestResultWithSuccesses
-from test_containers.tests import ContainerTest, ContainerTestCase
+from test_containers.tests import ContainerTest, Tests
 from test_containers.utils import nested_get, parse_yaml_file
 import os
 import sys
@@ -38,8 +38,8 @@ def run(path, exit=True):
     test_dict = parse_yaml_file(path)
     preprocess_test_dict(test_dict)
     tests = get_tests(test_dict)
-    ContainerTestCase.generate_tests(tests)
-    tests = unittest.defaultTestLoader.loadTestsFromTestCase(ContainerTestCase)
+    Tests.generate_tests(tests)
+    tests = unittest.defaultTestLoader.loadTestsFromTestCase(Tests)
     suite = unittest.TestSuite()
     suite.addTests(tests)
     result = unittest.TextTestRunner(resultclass=TextTestResultWithSuccesses).run(suite)
