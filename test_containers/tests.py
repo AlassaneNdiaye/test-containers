@@ -70,15 +70,6 @@ class ContainerTest:
 
 
 class ContainerTestCase(unittest.TestCase):
-    def setUp(self):
-        self.previous_working_dir = os.getcwd()
-        self.working_dir = tempfile.mkdtemp()
-        os.chdir(self.working_dir)
-
-    def tearDown(self):
-        os.chdir(self.previous_working_dir)
-        shutil.rmtree(self.working_dir)
-
     @staticmethod
     def generate_tests(tests):
         def generate_test_method(test):
@@ -96,12 +87,17 @@ class ContainerTestEnvironment:
         self.container = container
 
     def __enter__(self):
+        self.previous_working_dir = os.getcwd()
+        self.working_dir = tempfile.mkdtemp()
+        os.chdir(self.working_dir)
         self.docker_container = docker_client.containers.run(self.container["name"], detach=True,
                                                              **self.container["arguments"])
         self.__wait_container_ready()
 
     def __exit__(self, type, value, traceback):
         self.docker_container.stop()
+        os.chdir(self.previous_working_dir)
+        shutil.rmtree(self.working_dir)
 
     def __wait_container_ready(self):
         inspection = docker_client.api.inspect_container(self.docker_container.id)
