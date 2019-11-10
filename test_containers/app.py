@@ -1,6 +1,5 @@
-from test_containers.results import TextTestResultWithSuccesses
 from test_containers.tests import ContainerTest, Tests
-from test_containers.utils import nested_get, parse_yaml_file
+from test_containers.utils import nested_get, parse_yaml_file, TextTestResultWithSuccesses
 import os
 import sys
 import unittest
