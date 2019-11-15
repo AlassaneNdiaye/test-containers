@@ -1,10 +1,11 @@
 import os
 import sys
-dir_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(dir_path, ".."))
-
-import test_containers
 import unittest
+
+dir_path = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.insert(0, os.path.join(dir_path, ".."))
+import test_containers
 
 
 def process_result(result):
@@ -23,51 +24,179 @@ class Tests(unittest.TestCase):
     def test_exit_code(self):
         result = test_containers.run(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_expected_output(self):
         result = test_containers.run(os.path.join(dir_path, "test_expected_output.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_excluded_output(self):
         result = test_containers.run(os.path.join(dir_path, "test_excluded_output.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_expected_error(self):
         result = test_containers.run(os.path.join(dir_path, "test_expected_error.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_excluded_error(self):
         result = test_containers.run(os.path.join(dir_path, "test_excluded_error.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_file_exists(self):
         result = test_containers.run(os.path.join(dir_path, "test_file_exists.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_missing_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_missing_path_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_missing_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_missing_path_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_missing_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_missing_path_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_missing_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_missing_path_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_file_expected_content(self):
         result = test_containers.run(os.path.join(dir_path, "test_file_expected_content.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_path_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_path_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
     def test_file_excluded_content(self):
         result = test_containers.run(os.path.join(dir_path, "test_file_excluded_content.yaml"), exit=False)
         result = process_result(result)
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Good", result["successes"])
-        self.assertIn("test_containers.tests.Tests.test_httpd:2.4_Bad", result["failures"])
+        good_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_good_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_good_internal"
+        ]
+        bad_tests = [
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_container_bad_path_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_path_external",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_internal",
+            "test_containers.__main__.UnitTestGenerator.test_test_pod_bad_path_internal"
+        ]
+        for good_test in good_tests:
+            self.assertIn(good_test, result["successes"])
+        for bad_test in bad_tests:
+            self.assertIn(bad_test, result["failures"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
