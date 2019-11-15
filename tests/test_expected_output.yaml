@@ -1,13 +1,56 @@
-- container:
-      name: "httpd:2.4"
-      arguments:
-          auto_remove: True
-          ports:
-              80: 80
+- application:
+    name: "test-container"
+    type: "container"
+    arguments:
+      image: "httpd:2.4"
+      auto_remove: True
+      ports:
+        80: 80
   tests:
-    - name: "Good"
-      command: "wget -O - http://localhost/"
-      expected-output: "It works!"
-    - name: "Bad"
-      command: "wget -O - http://localhost/"
-      expected-output: "It doesn't work!"
+  - name: "good-external"
+    command: "wget -O - http://localhost/"
+    environment: "external"
+    expected-output: "It works!"
+  - name: "bad-external"
+    command: "wget -O - http://localhost/"
+    environment: "external"
+    expected-output: "It doesn't work!"
+  - name: "good-internal"
+    command: "httpd -v"
+    environment: "internal"
+    expected-output: "Apache"
+  - name: "bad-internal"
+    command: "httpd -v"
+    environment: "internal"
+    expected-output: "FAIL"
+- application:
+    name: "test-pod"
+    type: "pod"
+    arguments:
+      apiVersion: "v1"
+      kind: "Pod"
+      metadata:
+        name: "httpd"
+        namespace: "default"
+      spec:
+        containers:
+        - name: "httpd"
+          image: "httpd:2.4"
+        hostNetwork: true
+  tests:
+  - name: "good-external"
+    command: "wget -O - http://localhost/"
+    environment: "external"
+    expected-output: "It works!"
+  - name: "bad-external"
+    command: "wget -O - http://localhost/"
+    environment: "external"
+    expected-output: "It doesn't work!"
+  - name: "good-internal"
+    command: "httpd -v"
+    environment: "internal"
+    expected-output: "Apache"
+  - name: "bad-internal"
+    command: "httpd -v"
+    environment: "internal"
+    expected-output: "FAIL"
