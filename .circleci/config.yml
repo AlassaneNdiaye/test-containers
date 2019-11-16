@@ -1,7 +1,8 @@
 version: 2
 jobs:
   build:
-    machine: True
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/test-containers
     steps:
     - checkout
@@ -14,6 +15,14 @@ jobs:
           /usr/bin/python3.6  -m venv venv
           source venv/bin/activate
           pip install .
+    - run:
+        name: install kubernetes
+        command: |
+          git clone https://github.com/AlassaneNdiaye/home-lab-infrastructure.git
+          sudo home-lab-infrastructure/scripts/ansible/setup
+          ansible-playbook home-lab-infrastructure/scripts/kubernetes/setup-master.yaml \
+                           -i home-lab-infrastructure/scripts/inventory
+        working_directory: ~
     - run:
         name: run tests
         command: |
