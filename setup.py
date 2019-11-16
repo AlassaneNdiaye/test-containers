@@ -1,7 +1,12 @@
-from test_containers.__main__ import HELP_TEXT
+import os
 import setuptools
 
-with open("README.md", "r") as f:
+dir_path = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(dir_path, "test_containers/help.txt"), "r") as f:
+    help_text = f.read()
+
+with open(os.path.join(dir_path, "README.md"), "r") as f:
     long_description = f.read()
 
 setuptools.setup(
@@ -9,7 +14,7 @@ setuptools.setup(
     version="0.1",
     author="Alassane Ndiaye",
     author_email="alassane.ndiaye@gmail.com",
-    description=HELP_TEXT,
+    description=help_text,
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/AlassaneNdiaye/test-containers",

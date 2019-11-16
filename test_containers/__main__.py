@@ -3,10 +3,11 @@ from test_containers.evaluator import Evaluator
 from test_containers.test import Test
 from test_containers.utils import parse_yaml_file, TextTestResultWithSuccesses
 import argparse
+import os
 import sys
 import unittest
 
-HELP_TEXT = "Test containers using yaml files for configuration."
+dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class UnitTestGenerator(unittest.TestCase):
@@ -70,7 +71,9 @@ def run(path, exit=True):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=HELP_TEXT)
+    with open(os.path.join(dir_path, "help.txt"), "r") as f:
+        help_text = f.read()
+    parser = argparse.ArgumentParser(description=help_text)
     parser.add_argument("--config", help="configuration file to get the tests from", required=True)
     args = parser.parse_args()
     run(args.config)
