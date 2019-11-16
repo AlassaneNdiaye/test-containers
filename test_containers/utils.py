@@ -5,11 +5,7 @@ import yaml
 
 class TextTestResultWithSuccesses(TextTestResult):
     """
-    This class extends TextTestResult such that passing tests get reported in
-    `self.successes`.
-
-    This is necessary because TextTestResult doesn't report successes by
-    default.
+    This class extends TextTestResult so that successful tests get reported in `self.successes`.
     """
     def __init__(self, *args, **kwargs):
         super(TextTestResultWithSuccesses, self).__init__(*args, **kwargs)
