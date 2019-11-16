@@ -1,11 +1,8 @@
 import os
-import sys
+import test_containers
 import unittest
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
-
-sys.path.insert(0, os.path.join(dir_path, ".."))
-import test_containers
 
 
 def process_result(result):

@@ -1,4 +1,4 @@
-from test_containers.environments import ContainerTestEnvironment, KubernetesTestEnvironment
+from test_containers.environments import DockerTestEnvironment, KubernetesTestEnvironment
 from test_containers.utils import execute_command
 import os
 
@@ -58,9 +58,9 @@ class Evaluator:
         self.__unit_test_object = unit_test_object
         self.__application = application
         self.__test = test
-        if self.__application.application_type == "container":
-            environment = ContainerTestEnvironment(container=self.__application)
-        elif self.__application.application_type == "pod":
+        if self.__application.application_type == "docker":
+            environment = DockerTestEnvironment(container=self.__application)
+        elif self.__application.application_type == "kubernetes":
             environment = KubernetesTestEnvironment(pod=self.__application)
         else:
             raise NotImplementedError

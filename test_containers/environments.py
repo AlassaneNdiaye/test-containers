@@ -33,7 +33,7 @@ class TestEnvironment:
         raise NotImplementedError
 
 
-class ContainerTestEnvironment(TestEnvironment):
+class DockerTestEnvironment(TestEnvironment):
     def __init__(self, container):
         super().__init__()
         self.__container = container

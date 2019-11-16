@@ -1,6 +1,6 @@
 - application:
     name: "test-container"
-    type: "container"
+    type: "docker"
     arguments:
       image: "httpd:2.4"
       auto_remove: True
@@ -45,7 +45,7 @@
       excluded-content: ""
 - application:
     name: "test-pod"
-    type: "pod"
+    type: "kubernetes"
     arguments:
       apiVersion: "v1"
       kind: "Pod"
