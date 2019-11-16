@@ -1,13 +1,56 @@
-- container:
-      name: "httpd:2.4"
-      arguments:
-          auto_remove: True
-          ports:
-              80: 80
+- application:
+    name: "test-container"
+    type: "docker"
+    arguments:
+      image: "httpd:2.4"
+      auto_remove: True
+      ports:
+        80: 80
   tests:
-    - name: "Good"
-      command: "wget http://localhost/"
-      exit-code: 0
-    - name: "Bad"
-      command: "wget http://localhost/"
-      exit-code: 1
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    exit-code: 0
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    exit-code: 1
+  - name: "good-internal"
+    command: "httpd -v"
+    environment: "internal"
+    exit-code: 0
+  - name: "bad-internal"
+    command: "httpd -v"
+    environment: "internal"
+    exit-code: 1
+- application:
+    name: "test-pod"
+    type: "kubernetes"
+    arguments:
+      apiVersion: "v1"
+      kind: "Pod"
+      metadata:
+        name: "httpd"
+        namespace: "default"
+      spec:
+        containers:
+        - name: "httpd"
+          image: "httpd:2.4"
+        hostNetwork: true
+  tests:
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    exit-code: 0
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    exit-code: 1
+  - name: "good-internal"
+    command: "httpd -v"
+    environment: "internal"
+    exit-code: 0
+  - name: "bad-internal"
+    command: "httpd -v"
+    environment: "internal"
+    exit-code: 1

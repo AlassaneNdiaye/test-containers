@@ -1,17 +1,120 @@
-- container:
-      name: "httpd:2.4"
-      arguments:
-          auto_remove: True
-          ports:
-              80: 80
+- application:
+    name: "test-container"
+    type: "docker"
+    arguments:
+      image: "httpd:2.4"
+      auto_remove: True
+      ports:
+        80: 80
   tests:
-    - name: "Good"
-      command: "wget http://localhost/"
-      files:
-        - path: "index.html"
-          exists: True
-    - name: "Bad"
-      command: "wget http://localhost/"
-      files:
-        - path: "index.html"
-          exists: False
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "index.html"
+      exists: True
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "index.html"
+      exists: False
+  - name: "good-missing-path-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "bad-path"
+      exists: False
+  - name: "bad-missing-path-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "bad-path"
+      exists: True
+  - name: "good-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "file"
+      exists: True
+  - name: "bad-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "file"
+      exists: False
+  - name: "good-missing-path-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "bad-path"
+      exists: False
+  - name: "bad-missing-path-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "bad-path"
+      exists: True
+- application:
+    name: "test-pod"
+    type: "kubernetes"
+    arguments:
+      apiVersion: "v1"
+      kind: "Pod"
+      metadata:
+        name: "httpd"
+        namespace: "default"
+      spec:
+        containers:
+        - name: "httpd"
+          image: "httpd:2.4"
+        hostNetwork: true
+  tests:
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "index.html"
+      exists: True
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "index.html"
+      exists: False
+  - name: "good-missing-path-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "bad-path"
+      exists: False
+  - name: "bad-missing-path-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    files:
+    - path: "bad-path"
+      exists: True
+  - name: "good-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "file"
+      exists: True
+  - name: "bad-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "file"
+      exists: False
+  - name: "good-missing-path-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "bad-path"
+      exists: False
+  - name: "bad-missing-path-internal"
+    command: "bash -c 'echo content > file'"
+    environment: "internal"
+    files:
+    - path: "bad-path"
+      exists: True

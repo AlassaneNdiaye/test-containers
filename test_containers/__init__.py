@@ -1,1 +1,1 @@
-from test_containers.app import run
+from test_containers.__main__ import run

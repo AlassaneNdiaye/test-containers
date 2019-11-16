@@ -1,5 +1,19 @@
+from unittest import TextTestResult
 import subprocess
 import yaml
+
+
+class TextTestResultWithSuccesses(TextTestResult):
+    """
+    This class extends TextTestResult so that successful tests get reported in `self.successes`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(TextTestResultWithSuccesses, self).__init__(*args, **kwargs)
+        self.successes = []
+
+    def addSuccess(self, test):
+        super(TextTestResultWithSuccesses, self).addSuccess(test)
+        self.successes.append(test)
 
 
 def execute_command(command):

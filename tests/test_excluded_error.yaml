@@ -1,13 +1,56 @@
-- container:
-      name: "httpd:2.4"
-      arguments:
-          auto_remove: True
-          ports:
-              80: 80
+- application:
+    name: "test-container"
+    type: "docker"
+    arguments:
+      image: "httpd:2.4"
+      auto_remove: True
+      ports:
+        80: 80
   tests:
-    - name: "Good"
-      command: "wget http://localhost/"
-      excluded-error: "FAIL"
-    - name: "Bad"
-      command: "wget http://localhost/"
-      excluded-error: "200 OK"
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    excluded-error: "FAIL"
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    excluded-error: "200 OK"
+  - name: "good-internal"
+    command: "bash -c 'httpd -v 1>&2'"
+    environment: "internal"
+    excluded-error: "FAIL"
+  - name: "bad-internal"
+    command: "bash -c 'httpd -v 1>&2'"
+    environment: "internal"
+    excluded-error: "Apache"
+- application:
+    name: "test-pod"
+    type: "kubernetes"
+    arguments:
+      apiVersion: "v1"
+      kind: "Pod"
+      metadata:
+        name: "httpd"
+        namespace: "default"
+      spec:
+        containers:
+        - name: "httpd"
+          image: "httpd:2.4"
+        hostNetwork: true
+  tests:
+  - name: "good-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    excluded-error: "FAIL"
+  - name: "bad-external"
+    command: "wget http://localhost/"
+    environment: "external"
+    excluded-error: "200 OK"
+  - name: "good-internal"
+    command: "bash -c 'httpd -v 1>&2'"
+    environment: "internal"
+    excluded-error: "FAIL"
+  - name: "bad-internal"
+    command: "bash -c 'httpd -v 1>&2'"
+    environment: "internal"
+    excluded-error: "Apache"
