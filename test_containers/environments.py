@@ -59,7 +59,11 @@ class DockerTestEnvironment(TestEnvironment):
             time.sleep(2)
 
     def execute_command(self, command):
+        if type(command) == str:
+            command = ["bash", "-c", command]
+
         exec_run_result = self.__docker_container.exec_run(command, demux=True)
+
         result = dict()
         result["exit-code"] = exec_run_result.exit_code
         if exec_run_result.output[0]:
@@ -70,6 +74,7 @@ class DockerTestEnvironment(TestEnvironment):
             result["error"] = exec_run_result.output[1].decode("utf-8").strip()
         else:
             result["error"] = ""
+
         return result
 
 
@@ -135,11 +140,14 @@ class KubernetesTestEnvironment(TestEnvironment):
     def execute_command(self, command):
         result = dict()
 
+        if type(command) == str:
+            command = ["bash", "-c", command]
+
         exec_stream = stream(
             kubernetes_api.connect_get_namespaced_pod_exec,
             self.__pod.arguments["metadata"]["name"],
             self.__pod.arguments["metadata"]["namespace"],
-            command=["bash", "-c", command],
+            command=command,
             stderr=True, stdin=True,
             stdout=True, tty=False,
             _preload_content=False
