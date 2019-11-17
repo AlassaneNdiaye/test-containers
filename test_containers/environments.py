@@ -94,7 +94,8 @@ class KubernetesTestEnvironment(TestEnvironment):
     def __exit__(self, type, value, traceback):
         kubernetes_api.delete_namespaced_pod(
             self.__pod.arguments["metadata"]["name"],
-            self.__pod.arguments["metadata"]["namespace"]
+            self.__pod.arguments["metadata"]["namespace"],
+            grace_period_seconds=0
         )
         self.__wait_pod_deleted()
         super().__exit__(type, value, traceback)
