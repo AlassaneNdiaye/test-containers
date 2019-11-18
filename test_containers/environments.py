@@ -1,3 +1,4 @@
+from docker.errors import NotFound
 from kubernetes.client.rest import ApiException
 from kubernetes.stream import stream
 from kubernetes.stream.ws_client import ERROR_CHANNEL
@@ -45,7 +46,17 @@ class DockerTestEnvironment(TestEnvironment):
 
     def __exit__(self, type, value, traceback):
         self.__docker_container.stop()
+        self.__wait_container_deleted()
         super().__exit__(type, value, traceback)
+
+    def __wait_container_deleted(self):
+        print("\nWaiting for container to be deleted... ", end="", file=sys.stderr, flush=True)
+        try:
+            while True:
+                docker_client.api.inspect_container(self.__docker_container.id)
+                time.sleep(2)
+        except NotFound:
+            print("Container deleted.", file=sys.stderr)
 
     def __wait_container_ready(self):
         inspection = docker_client.api.inspect_container(self.__docker_container.id)
@@ -95,7 +106,7 @@ class KubernetesTestEnvironment(TestEnvironment):
         kubernetes_api.delete_namespaced_pod(
             self.__pod.arguments["metadata"]["name"],
             self.__pod.arguments["metadata"]["namespace"],
-            grace_period_seconds=0
+            grace_period_seconds=2
         )
         self.__wait_pod_deleted()
         super().__exit__(type, value, traceback)
@@ -139,8 +150,6 @@ class KubernetesTestEnvironment(TestEnvironment):
         print("Pod ready.", file=sys.stderr)
 
     def execute_command(self, command):
-        result = dict()
-
         if type(command) == str:
             command = ["bash", "-c", command]
 
@@ -155,6 +164,7 @@ class KubernetesTestEnvironment(TestEnvironment):
         )
         exec_stream.run_forever(timeout=60)
 
+        result = dict()
         if exec_stream.peek_stdout():
             result["output"] = exec_stream.read_stdout()
         if exec_stream.peek_stderr():
