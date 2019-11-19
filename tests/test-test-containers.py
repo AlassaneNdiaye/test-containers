@@ -1,5 +1,5 @@
+from test_containers.__main__ import run
 import os
-import test_containers
 import unittest
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -19,7 +19,7 @@ def process_result(result):
 
 class Tests(unittest.TestCase):
     def test_exit_code(self):
-        result = test_containers.run(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -39,7 +39,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_expected_output(self):
-        result = test_containers.run(os.path.join(dir_path, "test_expected_output.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_expected_output.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -59,7 +59,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_excluded_output(self):
-        result = test_containers.run(os.path.join(dir_path, "test_excluded_output.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_excluded_output.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -79,7 +79,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_expected_error(self):
-        result = test_containers.run(os.path.join(dir_path, "test_expected_error.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_expected_error.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -99,7 +99,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_excluded_error(self):
-        result = test_containers.run(os.path.join(dir_path, "test_excluded_error.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_excluded_error.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -119,7 +119,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_file_exists(self):
-        result = test_containers.run(os.path.join(dir_path, "test_file_exists.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_file_exists.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -147,7 +147,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_file_expected_content(self):
-        result = test_containers.run(os.path.join(dir_path, "test_file_expected_content.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_file_expected_content.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
@@ -171,7 +171,7 @@ class Tests(unittest.TestCase):
             self.assertIn(bad_test, result["failures"])
 
     def test_file_excluded_content(self):
-        result = test_containers.run(os.path.join(dir_path, "test_file_excluded_content.yaml"), exit=False)
+        result = run(os.path.join(dir_path, "test_file_excluded_content.yaml"), exit=False)
         result = process_result(result)
         good_tests = [
             "test_containers.__main__.UnitTestGenerator.test_test_container_good_external",
