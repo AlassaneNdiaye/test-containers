@@ -46,17 +46,7 @@ class DockerTestEnvironment(TestEnvironment):
 
     def __exit__(self, type, value, traceback):
         self.__docker_container.stop()
-        self.__wait_container_deleted()
         super().__exit__(type, value, traceback)
-
-    def __wait_container_deleted(self):
-        print("\nWaiting for container to be deleted... ", end="", file=sys.stderr, flush=True)
-        try:
-            while True:
-                docker_client.api.inspect_container(self.__docker_container.id)
-                time.sleep(2)
-        except NotFound:
-            print("Container deleted.", file=sys.stderr)
 
     def __wait_container_ready(self):
         inspection = docker_client.api.inspect_container(self.__docker_container.id)
