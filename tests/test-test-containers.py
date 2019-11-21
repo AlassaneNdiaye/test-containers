@@ -1,6 +1,7 @@
 from test_containers.__main__ import run
 import os
 import unittest
+import warnings
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,6 +19,9 @@ def process_result(result):
 
 
 class Tests(unittest.TestCase):
+    def setUp(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
     def test_exit_code(self):
         result = run(os.path.join(dir_path, "test_exit_code.yaml"), exit=False)
         result = process_result(result)

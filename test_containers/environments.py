@@ -1,4 +1,3 @@
-from docker.errors import NotFound
 from kubernetes.client.rest import ApiException
 from kubernetes.stream import stream
 from kubernetes.stream.ws_client import ERROR_CHANNEL
@@ -167,5 +166,7 @@ class KubernetesTestEnvironment(TestEnvironment):
                 if cause["reason"] == "ExitCode":
                     result["exit-code"] = int(cause["message"])
                     break
+
+        exec_stream.close()
 
         return result

@@ -6,12 +6,16 @@ import argparse
 import os
 import sys
 import unittest
+import warnings
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class UnitTestGenerator(unittest.TestCase):
     test_functions = []
+
+    def setUp(self):
+        warnings.simplefilter("ignore", ResourceWarning)
 
     @staticmethod
     def generate_tests(tests):

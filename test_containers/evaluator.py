@@ -18,25 +18,25 @@ class Evaluator:
             )
 
         if "expected-output" in self.__test.arguments:
-            self.__unit_test_object.assertRegexpMatches(
+            self.__unit_test_object.assertRegex(
                 self.__test_result["output"],
                 self.__test.arguments["expected-output"]
             )
 
         if "excluded-output" in self.__test.arguments:
-            self.__unit_test_object.assertNotRegexpMatches(
+            self.__unit_test_object.assertNotRegex(
                 self.__test_result["output"],
                 self.__test.arguments["excluded-output"]
             )
 
         if "expected-error" in self.__test.arguments:
-            self.__unit_test_object.assertRegexpMatches(
+            self.__unit_test_object.assertRegex(
                 self.__test_result["error"],
                 self.__test.arguments["expected-error"]
             )
 
         if "excluded-error" in self.__test.arguments:
-            self.__unit_test_object.assertNotRegexpMatches(
+            self.__unit_test_object.assertNotRegex(
                 self.__test_result["error"],
                 self.__test.arguments["excluded-error"]
             )
@@ -50,9 +50,9 @@ class Evaluator:
                 if "expected-content" in file_tests or "excluded-content" in file_tests:
                     self.__unit_test_object.assertIsNotNone(file_content)
                 if "expected-content" in file_tests:
-                    self.__unit_test_object.assertRegexpMatches(file_content, file_tests["expected-content"])
+                    self.__unit_test_object.assertRegex(file_content, file_tests["expected-content"])
                 if "excluded-content" in file_tests:
-                    self.__unit_test_object.assertNotRegexpMatches(file_content, file_tests["excluded-content"])
+                    self.__unit_test_object.assertNotRegex(file_content, file_tests["excluded-content"])
 
     def run_test(self, unit_test_object, application, test):
         self.__unit_test_object = unit_test_object
