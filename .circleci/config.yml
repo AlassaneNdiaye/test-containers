@@ -18,10 +18,10 @@ jobs:
     - run:
         name: install kubernetes
         command: |
-          git clone https://github.com/AlassaneNdiaye/home-lab-infrastructure.git
-          sudo home-lab-infrastructure/scripts/ansible/setup
-          ansible-playbook home-lab-infrastructure/scripts/kubernetes/setup-master.yaml \
-                           -i home-lab-infrastructure/scripts/inventory
+          git clone https://github.com/AlassaneNdiaye/home-lab-infrastructure-forward.git
+          sudo home-lab-infrastructure-forward/scripts/ansible/setup
+          ansible-playbook home-lab-infrastructure-forward/scripts/kubernetes/setup-master.yaml \
+                           -i home-lab-infrastructure-forward/scripts/inventory
         working_directory: ~
     - run:
         name: run tests
