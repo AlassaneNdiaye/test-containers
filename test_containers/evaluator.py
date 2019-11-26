@@ -72,9 +72,12 @@ class Evaluator:
                     for file_tests in self.__test.arguments["files"]:
                         file_path = file_tests["path"]
                         if os.path.exists(file_path):
-                            with open(file_path) as f:
-                                file_content = f.read()
-                            self.__test_result["files"][file_path] = file_content
+                            if "expected-content" in file_tests or "excluded-content" in file_tests:
+                                with open(file_path) as f:
+                                    file_content = f.read()
+                                self.__test_result["files"][file_path] = file_content
+                            else:
+                                self.__test_result["files"][file_path] = ""
                         else:
                             self.__test_result["files"][file_path] = None
             elif self.__test.environment == "internal":

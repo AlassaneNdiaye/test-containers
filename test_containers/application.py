@@ -9,7 +9,7 @@ class Application:
         self.__expand_paths()
 
     def __expand_paths(self):
-        if self.__application_type == "container" and "volumes" in self.__arguments:
+        if self.__application_type == "docker" and "volumes" in self.__arguments:
             volumes = self.__arguments["volumes"]
             for path in volumes.keys():
                 abs_path = os.path.abspath(path)
