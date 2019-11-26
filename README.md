@@ -11,7 +11,7 @@ using yaml files for configuration.
 
 * [pip](https://pip.pypa.io/en/stable/)
 
-* [Python](https://www.python.org/) 
+* [Python](https://www.python.org/)
 
 * [venv](https://docs.python.org/3/library/venv.html)
 
@@ -22,7 +22,7 @@ For installation, follow these steps.
 Create a Python virtual environment:
 
 ```
-python  -m venv environment
+python -m venv environment
 ```
 
 Activate the virtual environment:
@@ -38,7 +38,7 @@ pip install test-containers
 ```
 
 The library is now ready for use.
-Assuming you have a valid configuration file `test.yaml`, you can run your tests using:
+Assuming you have a valid configuration file `tests.yaml`, you can run your tests using:
 
 ```
 python -m test_containers --config tests.yaml
@@ -267,5 +267,5 @@ If you want to know how and why this library was made, take a look at the
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - 
+This project is licensed under the GNU General Public License v3.0 -
 see the [LICENSE.txt](LICENSE.txt) file for details.
