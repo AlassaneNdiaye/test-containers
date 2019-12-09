@@ -8,7 +8,7 @@ with open(os.path.join(dir_path, "test_containers/help.txt"), "r") as f:
 
 setuptools.setup(
     name="test-containers",
-    version="0.1.9",
+    version="0.1.10",
     author="Alassane Ndiaye",
     author_email="alassane.ndiaye@gmail.com",
     description=help_text,
