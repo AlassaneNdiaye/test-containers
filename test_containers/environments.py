@@ -12,8 +12,14 @@ import yaml
 
 docker_client = docker.from_env()
 
-kubernetes.config.load_kube_config()
-kubernetes_api = kubernetes.client.CoreV1Api()
+try:
+    kubernetes.config.load_kube_config()
+    kubernetes_api = kubernetes.client.CoreV1Api()
+except TypeError:
+    sys.stderr.write(
+        "Failed to load the Kubernetes configuration file.\n"
+        "This behavior is expected if Kubernetes isn't installed."
+    )
 
 
 class TestEnvironment:
